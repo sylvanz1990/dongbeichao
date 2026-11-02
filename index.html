@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>东北超票根经济</title>
+<style>
+/* ========== 全局变量与重置 ========== */
+:root {
+  --bg-snow: #f5f0e1;
+  --primary-navy: #1a3a5c;
+  --accent-orange: #e63946;
+  --text-dark: #1a1a2e;
+  --text-gray: #6b7280;
+  --card-bg: #ffffff;
+  --border-color: #e5e7eb;
+  --radius: 16px;
+  --tab-height: 60px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background: var(--bg-snow);
+  color: var(--text-dark);
+  max-width: 420px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ========== 地区主题背景 ========== */
+.theme-bg {
+  position: fixed;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 420px;
+  height: 100vh;
+  z-index: -1;
+  transition: background 0.8s ease;
+}
+
+/* 长春·长白山 */
+.theme-changchun {
+  background: linear-gradient(180deg, #d4e6f1 0%, #a8c8e0 40%, #f5f0e1 100%);
+}
+/* 延吉·朝鲜族 */
+.theme-yanji {
+  background: linear-gradient(180deg, #f8e4e4 0%, #e8c5d0 40%, #f5f0e1 100%);
+}
+/* 沈阳·工业海滨 */
+.theme-shenyang {
+  background: linear-gradient(180deg, #2c5f8a 0%, #4a7ba6 40%, #f5f0e1 100%);
+}
+/* 哈尔滨·冰雪大世界 */
+.theme-haerbin {
+  background: linear-gradient(180deg, #b8d4e8 0%, #8fb8d8 40%, #f5f0e1 100%);
+}
+/* 呼伦贝尔·草原 */
+.theme-hulunbeier {
+  background: linear-gradient(180deg, #a8d5a2 0%, #7cb87a 40%, #f5f0e1 100%);
+}
+
+/* 装饰元素 */
+.deco-snow {
+  position: absolute;
+  top: 80px; left: 50%;
+  transform: translateX(-50%);
+  width: 300px; height: 180px;
+  opacity: 0.3;
+}
+.deco-hanok {
+  position: absolute;
+  top: 100px; right: 20px;
+  width: 120px; height: 100px;
+  opacity: 0.25;
+}
+.deco-ice {
+  position: absolute;
+  top: 60px; left: 50%;
+  transform: translateX(-50%);
+  width: 280px; height: 200px;
+  opacity: 0.25;
+}
+.deco-grass {
+  position: absolute;
+  bottom: 100px; left: 0;
+  width: 100%; height: 120px;
+  opacity: 0.2;
+}
+
+/* ========== 页面容器 ========== */
+.page {
+  display: none;
+  padding-bottom: calc(var(--tab-height) + 20px);
+  min-height: 100vh;
+}
+.page.active { display: block; }
+
+/* ========== 票根首页 ========== */
+.hero-header {
+  padding: 20px 20px 10px;
+}
+.brand {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--primary-navy);
+  letter-spacing: 2px;
+}
+.brand-en {
+  font-size: 11px;
+  color: var(--text-gray);
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+.area-tag {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: var(--primary-navy);
+  color: #fff;
+  font-size: 12px;
+  border-radius: 20px;
+}
+
+.slogan {
+  text-align: center;
+  padding: 20px 20px 16px;
+}
+.slogan-main {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--primary-navy);
+  letter-spacing: 3px;
+  line-height: 1.3;
+}
+.slogan-sub {
+  font-size: 13px;
+  color: var(--text-gray);
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+/* 票根卡片 */
+.ticket-card {
+  margin: 16px 20px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(26, 58, 92, 0.12);
+  position: relative;
+}
+.ticket-top {
+  background: var(--primary-navy);
+  color: #fff;
+  padding: 20px;
+  position: relative;
+}
+.ticket-price {
+  font-size: 36px;
+  font-weight: 900;
+}
+.ticket-price .yen { font-size: 20px; vertical-align: top; }
+.ticket-name {
+  font-size: 16px;
+  margin-top: 4px;
+  opacity: 0.9;
+}
+.ticket-badge {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: var(--accent-orange);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.ticket-bottom {
+  padding: 16px 20px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--card-bg),
+    var(--card-bg) 8px,
+    #f9f9f9 8px,
+    #f9f9f9 16px
+  );
+}
+.ticket-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-gray);
+  padding: 4px 0;
+}
+.ticket-row .val { color: var(--text-dark); font-weight: 600; }
+
+/* 四省标识 */
+.provinces {
+  display: flex;
+  justify-content: space-around;
+  padding: 16px 20px;
+  margin: 0 20px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.province-item {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-navy);
+}
+.province-item .dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--bg-snow);
+  margin: 0 auto 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* 快捷入口 */
+.quick-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+  margin: 16px 20px 0;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.quick-action {
+  text-align: center;
+  cursor: pointer;
+}
+.quick-action .icon {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: var(--bg-snow);
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.quick-action .label {
+  font-size: 12px;
+  color: var(--text-dark);
+}
+
+/* 权益亮点 */
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  padding: 20px 20px 12px;
+}
+.highlight-list {
+  margin: 0 20px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.highlight-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+.highlight-item:last-child { border-bottom: none; }
+.highlight-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--bg-snow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 18px;
+}
+.highlight-text .t { font-size: 14px; font-weight: 600; }
+.highlight-text .d { font-size: 12px; color: var(--text-gray); margin-top: 2px; }
+
+/* 地区选择器 */
+.area-selector {
+  margin: 16px 20px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.area-selector label {
+  font-size: 12px;
+  color: var(--text-gray);
+  display: block;
+  margin-bottom: 8px;
+}
+.area-selector select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--bg-snow);
+  color: var(--text-dark);
+  outline: none;
+}
+
+/* ========== 权益中心 ========== */
+.权益-header {
+  padding: 24px 20px 16px;
+}
+.权益-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--primary-navy);
+}
+.权益-sub {
+  font-size: 13px;
+  color: var(--text-gray);
+  margin-top: 4px;
+}
+
+.sku-overview {
+  margin: 0 20px 16px;
+  background: linear-gradient(135deg, var(--primary-navy), #2d5a8a);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.sku-overview .num {
+  font-size: 32px;
+  font-weight: 900;
+}
+.sku-overview .desc {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+.sku-list { padding: 0 20px; }
+.sku-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.sku-card-head {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.sku-card-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--bg-snow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-right: 12px;
+}
+.sku-card-info .t { font-size: 16px; font-weight: 700; }
+.sku-card-info .d { font-size: 12px; color: var(--text-gray); margin-top: 2px; }
+.sku-card-arrow {
+  margin-left: auto;
+  font-size: 18px;
+  color: var(--text-gray);
+  transition: transform 0.3s;
+}
+.sku-card.expanded .sku-card-arrow { transform: rotate(180deg); }
+.sku-card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.sku-card.expanded .sku-card-body { max-height: 300px; }
+.sku-card-body-inner {
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+}
+.sku-rule {
+  font-size: 13px;
+  color: var(--text-gray);
+  line-height: 1.6;
+  padding: 4px 0;
+}
+.sku-rule strong { color: var(--text-dark); }
+
+/* 商户四统一 */
+.merchant-unify {
+  margin: 16px 20px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.merchant-unify h4 {
+  font-size: 14px;
+  color: var(--primary-navy);
+  margin-bottom: 10px;
+}
+.unify-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.unify-tag {
+  padding: 4px 10px;
+  background: var(--bg-snow);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-dark);
+}
+
+/* ========== 附近门店 ========== */
+.store-header {
+  padding: 24px 20px 12px;
+}
+.store-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--primary-navy);
+}
+.store-loc {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-gray);
+}
+.store-loc .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  margin-right: 6px;
+}
+
+.search-bar {
+  margin: 12px 20px;
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+}
+
+.filter-tabs {
+  display: flex;
+  padding: 0 20px;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.filter-tab {
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  background: var(--card-bg);
+  color: var(--text-gray);
+  cursor: pointer;
+  border: none;
+}
+.filter-tab.active {
+  background: var(--primary-navy);
+  color: #fff;
+}
+
+.store-list { padding: 0 20px; }
+.store-item {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.store-img {
+  width: 70px; height: 70px;
+  border-radius: 12px;
+  background: var(--bg-snow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.store-info { flex: 1; }
+.store-name { font-size: 15px; font-weight: 700; }
+.store-meta {
+  font-size: 12px;
+  color: var(--text-gray);
+  margin-top: 4px;
+}
+.store-rating {
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+.store-dist {
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-gray);
+}
+.store-nav {
+  margin-top: 6px;
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--bg-snow);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--primary-navy);
+  cursor: pointer;
+}
+
+/* ========== 扫码核销 ========== */
+.verify-page {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px 80px;
+}
+.verify-page.active { display: flex; }
+
+.verify-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--primary-navy);
+  margin-bottom: 8px;
+}
+.verify-sub {
+  font-size: 13px;
+  color: var(--text-gray);
+  margin-bottom: 30px;
+}
+
+.qr-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  text-align: center;
+}
+.qr-code {
+  width: 200px; height: 200px;
+  background: #fff;
+  position: relative;
+}
+.qr-pattern {
+  width: 100%; height: 100%;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 2px;
+  padding: 10px;
+}
+.qr-cell {
+  background: var(--primary-navy);
+  border-radius: 1px;
+}
+.qr-cell.empty { background: transparent; }
+
+.barcode {
+  margin-top: 16px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.barcode span {
+  display: block;
+  background: var(--text-dark);
+}
+
+.verify-code {
+  margin-top: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--primary-navy);
+}
+.verify-countdown {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-gray);
+}
+.verify-countdown .num {
+  color: var(--accent-orange);
+  font-weight: 700;
+}
+
+.verify-btn {
+  margin-top: 24px;
+  padding: 12px 40px;
+  background: var(--accent-orange);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.verify-success {
+  display: none;
+  text-align: center;
+  margin-top: 30px;
+}
+.verify-success.show { display: block; }
+.verify-success .check {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #fff;
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+.verify-success .t { font-size: 18px; font-weight: 700; color: #22c55e; }
+
+/* ========== 底部 TabBar ========== */
+.tabbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  height: var(--tab-height);
+  background: #fff;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  z-index: 100;
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-gray);
+  font-size: 11px;
+}
+.tab-item .icon { font-size: 22px; margin-bottom: 2px; }
+.tab-item.active { color: var(--primary-navy); font-weight: 600; }
+
+/* toast */
+.toast {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 999;
+  display: none;
+}
+.toast.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- 地区主题背景 -->
+<div class="theme-bg theme-changchun" id="themeBg">
+  <svg class="deco-snow" viewBox="0 0 300 180" id="decoSvg"></svg>
+</div>
+
+<!-- ===== 票根首页 ===== -->
+<div class="page active" id="page-home">
+  <div class="hero-header">
+    <div class="brand">东北超票根</div>
+    <div class="brand-en">DONGBEI CHAO · TICKET STUB</div>
+    <span class="area-tag" id="areaTag">长春 · 长白山</span>
+  </div>
+
+  <div class="slogan">
+    <div class="slogan-main">一张票根<br>串四省</div>
+    <div class="slogan-sub">辽宁 · 吉林 · 黑龙江 · 内蒙古</div>
+  </div>
+
+  <!-- 地区选择器（原型模拟） -->
+  <div class="area-selector">
+    <label>当前地区（原型模拟切换）</label>
+    <select id="areaSelect" onchange="switchArea(this.value)">
+      <option value="changchun">吉林 · 长春（长白山）</option>
+      <option value="yanji">延边 · 延吉（朝鲜族风情）</option>
+      <option value="shenyang">辽宁 · 沈阳（工业海滨）</option>
+      <option value="haerbin">黑龙江 · 哈尔滨（冰雪大世界）</option>
+      <option value="hulunbeier">内蒙古 · 呼伦贝尔（草原）</option>
+    </select>
+  </div>
+
+  <!-- 电子票根 -->
+  <div class="ticket-card">
+    <div class="ticket-top">
+      <div class="ticket-badge">已激活</div>
+      <div class="ticket-price"><span class="yen">¥</span>19.9</div>
+      <div class="ticket-name">东北超 · 四省联票票根</div>
+    </div>
+    <div class="ticket-bottom">
+      <div class="ticket-row">
+        <span>票号</span>
+        <span class="val">DB20261101001</span>
+      </div>
+      <div class="ticket-row">
+        <span>持有人</span>
+        <span class="val">东北超球迷</span>
+      </div>
+      <div class="ticket-row">
+        <span>有效期</span>
+        <span class="val">2026.11.01 - 2027.10.31</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四省标识 -->
+  <div class="provinces">
+    <div class="province-item"><div class="dot">辽</div>辽宁</div>
+    <div class="province-item"><div class="dot">吉</div>吉林</div>
+    <div class="province-item"><div class="dot">黑</div>黑龙江</div>
+    <div class="province-item"><div class="dot">蒙</div>内蒙古</div>
+  </div>
+
+  <!-- 快捷入口 -->
+  <div class="quick-actions">
+    <div class="quick-action" onclick="switchTab('benefits')">
+      <div class="icon">权益</div>
+      <div class="label">权益中心</div>
+    </div>
+    <div class="quick-action" onclick="switchTab('stores')">
+      <div class="icon">门店</div>
+      <div class="label">附近门店</div>
+    </div>
+    <div class="quick-action" onclick="switchTab('verify')">
+      <div class="icon">核销</div>
+      <div class="label">扫码核销</div>
+    </div>
+  </div>
+
+  <!-- 权益亮点 -->
+  <div class="section-title">权益亮点</div>
+  <div class="highlight-list">
+    <div class="highlight-item">
+      <div class="highlight-icon">景区</div>
+      <div class="highlight-text">
+        <div class="t">4省50+景区免票</div>
+        <div class="d">长白山、太阳岛、沈阳故宫、呼伦贝尔草原等</div>
+      </div>
+    </div>
+    <div class="highlight-item">
+      <div class="highlight-icon">餐饮</div>
+      <div class="highlight-text">
+        <div class="t">合作商户8折起</div>
+        <div class="d">东北菜、朝鲜族美食、蒙餐等千家商户</div>
+      </div>
+    </div>
+    <div class="highlight-item">
+      <div class="highlight-icon">住宿</div>
+      <div class="highlight-text">
+        <div class="t">合作酒店9折优惠</div>
+        <div class="d">四省连锁酒店、特色民宿均可用</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">商户四统一</div>
+  <div class="merchant-unify">
+    <div class="unify-tags">
+      <span class="unify-tag">统一标识</span>
+      <span class="unify-tag">统一收银</span>
+      <span class="unify-tag">统一核销</span>
+      <span class="unify-tag">统一服务标准</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 权益中心 ===== -->
+<div class="page" id="page-benefits">
+  <div class="权益-header">
+    <div class="权益-title">权益中心</div>
+    <div class="权益-sub">1+3 票根权益 SKU · 一张票根享三重福利</div>
+  </div>
+
+  <div class="sku-overview">
+    <div class="num">1 + 3</div>
+    <div class="desc">1张票根 = 景区免票 + 餐饮折扣 + 住宿优惠</div>
+  </div>
+
+  <div class="sku-list">
+    <div class="sku-card" onclick="toggleSku(this)">
+      <div class="sku-card-head">
+        <div class="sku-card-icon">景区</div>
+        <div class="sku-card-info">
+          <div class="t">景区免票权益</div>
+          <div class="d">四省 50+ 景区首道门票免费</div>
+        </div>
+        <div class="sku-card-arrow">▼</div>
+      </div>
+      <div class="sku-card-body">
+        <div class="sku-card-body-inner">
+          <div class="sku-rule"><strong>覆盖范围：</strong>辽宁、吉林、黑龙江、内蒙古四省</div>
+          <div class="sku-rule"><strong>代表景区：</strong>长白山、太阳岛、沈阳故宫、呼伦贝尔大草原、镜泊湖、五大连池</div>
+          <div class="sku-rule"><strong>使用规则：</strong>每日限用1次，需出示电子票根核销码</div>
+          <div class="sku-rule"><strong>合作景区数：</strong>56家</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sku-card" onclick="toggleSku(this)">
+      <div class="sku-card-head">
+        <div class="sku-card-icon">餐饮</div>
+        <div class="sku-card-info">
+          <div class="t">餐饮折扣权益</div>
+          <div class="d">合作餐厅 8折起，含东北特色菜系</div>
+        </div>
+        <div class="sku-card-arrow">▼</div>
+      </div>
+      <div class="sku-card-body">
+        <div class="sku-card-body-inner">
+          <div class="sku-rule"><strong>覆盖范围：</strong>四省主要城市核心商圈</div>
+          <div class="sku-rule"><strong>代表商户：</strong>老边饺子、朝鲜族冷面店、铁锅炖、蒙餐饭馆</div>
+          <div class="sku-rule"><strong>折扣力度：</strong>全场菜品 8折起（酒水除外）</div>
+          <div class="sku-rule"><strong>合作商户数：</strong>1200+ 家</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sku-card" onclick="toggleSku(this)">
+      <div class="sku-card-head">
+        <div class="sku-card-icon">住宿</div>
+        <div class="sku-card-info">
+          <div class="t">住宿优惠权益</div>
+          <div class="d">合作酒店及特色民宿 9折优惠</div>
+        </div>
+        <div class="sku-card-arrow">▼</div>
+      </div>
+      <div class="sku-card-body">
+        <div class="sku-card-body-inner">
+          <div class="sku-rule"><strong>覆盖范围：</strong>四省主要旅游城市</div>
+          <div class="sku-rule"><strong>代表品牌：</strong>连锁酒店、温泉度假酒店、草原蒙古包民宿</div>
+          <div class="sku-rule"><strong>优惠力度：</strong>门市价 9折，节假日通用</div>
+          <div class="sku-rule"><strong>合作商户数：</strong>380+ 家</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="merchant-unify">
+    <h4>商户四统一标准</h4>
+    <div class="unify-tags">
+      <span class="unify-tag">统一视觉标识</span>
+      <span class="unify-tag">统一收银系统</span>
+      <span class="unify-tag">统一核销流程</span>
+      <span class="unify-tag">统一服务规范</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 附近门店 ===== -->
+<div class="page" id="page-stores">
+  <div class="store-header">
+    <div class="store-title">附近门店</div>
+    <div class="store-loc">
+      <div class="dot"></div>
+      <span id="currentLoc">当前定位：长春市朝阳区</span>
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <span>搜索</span>
+    <input type="text" placeholder="搜索商户名称、品类..." id="searchInput" oninput="filterStores()">
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-type="all" onclick="filterType(this)">全部</button>
+    <button class="filter-tab" data-type="scenic" onclick="filterType(this)">景区</button>
+    <button class="filter-tab" data-type="food" onclick="filterType(this)">餐饮</button>
+    <button class="filter-tab" data-type="hotel" onclick="filterType(this)">住宿</button>
+  </div>
+
+  <div class="store-list" id="storeList"></div>
+</div>
+
+<!-- ===== 扫码核销 ===== -->
+<div class="page verify-page" id="page-verify">
+  <div class="verify-title">出示核销码</div>
+  <div class="verify-sub">向商户出示下方二维码完成核销</div>
+
+  <div class="qr-container">
+    <div class="qr-code" id="qrCode"></div>
+    <div class="barcode" id="barcode"></div>
+    <div class="verify-code" id="verifyCode">DB20261101</div>
+    <div class="verify-countdown">二维码 <span class="num" id="countdown">02:00</span> 后刷新</div>
+  </div>
+
+  <button class="verify-btn" onclick="simulateVerify()">模拟一键核销</button>
+
+  <div class="verify-success" id="verifySuccess">
+    <div class="check">✓</div>
+    <div class="t">核销成功</div>
+  </div>
+</div>
+
+<!-- ===== 底部 TabBar ===== -->
+<div class="tabbar">
+  <div class="tab-item active" data-page="home" onclick="switchTab('home')">
+    <div class="icon">票</div>
+    <div>票根</div>
+  </div>
+  <div class="tab-item" data-page="benefits" onclick="switchTab('benefits')">
+    <div class="icon">权</div>
+    <div>权益</div>
+  </div>
+  <div class="tab-item" data-page="stores" onclick="switchTab('stores')">
+    <div class="icon">店</div>
+    <div>门店</div>
+  </div>
+  <div class="tab-item" data-page="verify" onclick="switchTab('verify')">
+    <div class="icon">码</div>
+    <div>核销</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== 数据 ==========
+var stores = [
+  { name: "长白山景区游客中心", type: "scenic", rating: 4.8, dist: "2.3km", addr: "长白山保护区" },
+  { name: "老长春铁锅炖", type: "food", rating: 4.6, dist: "0.8km", addr: "朝阳区桂林路" },
+  { name: "长春国信大酒店", type: "hotel", rating: 4.5, dist: "1.2km", addr: "朝阳区人民大街" },
+  { name: "朝鲜族冷面王", type: "food", rating: 4.7, dist: "3.5km", addr: "延吉市光明街" },
+  { name: "哈尔滨冰雪大世界", type: "scenic", rating: 4.9, dist: "450km", addr: "松北区" },
+  { name: "沈阳故宫博物院", type: "scenic", rating: 4.8, dist: "280km", addr: "沈河区中街" },
+  { name: "呼伦贝尔草原牧场", type: "scenic", rating: 4.7, dist: "890km", addr: "呼伦贝尔市" },
+  { name: "东北炖菜馆", type: "food", rating: 4.4, dist: "1.5km", addr: "朝阳区桂林路" },
+  { name: "如家精选酒店", type: "hotel", rating: 4.3, dist: "2.0km", addr: "朝阳区解放大路" }
+];
+
+// 地区配置：身份证前两位 → 省份 → 主题
+var areaConfig = {
+  "21": { province: "辽宁省", city: "沈阳", theme: "shenyang", label: "沈阳 · 工业海滨" },
+  "22": { province: "吉林省", city: "长春", theme: "changchun", label: "长春 · 长白山" },
+  "23": { province: "黑龙江省", city: "哈尔滨", theme: "haerbin", label: "哈尔滨 · 冰雪大世界" },
+  "15": { province: "内蒙古自治区", city: "呼伦贝尔", theme: "hulunbeier", label: "呼伦贝尔 · 草原" }
+};
+
+// ========== Tab 切换 ==========
+function switchTab(page) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelector('.tab-item[data-page="' + page + '"]').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ========== 地区切换 ==========
+function switchArea(theme) {
+  var bg = document.getElementById('themeBg');
+  bg.className = 'theme-bg theme-' + theme;
+
+  var labels = {
+    "changchun": "长春 · 长白山",
+    "yanji": "延吉 · 朝鲜族风情",
+    "shenyang": "沈阳 · 工业海滨",
+    "haerbin": "哈尔滨 · 冰雪大世界",
+    "hulunbeier": "呼伦贝尔 · 草原"
+  };
+  document.getElementById('areaTag').textContent = labels[theme];
+}
+
+// ========== 身份证判断地区 ==========
+function detectAreaByIdCard(idCard) {
+  var prefix = idCard.substring(0, 2);
+  if (areaConfig[prefix]) {
+    var config = areaConfig[prefix];
+    document.getElementById('areaSelect').value = config.theme === 'shenyang' ? 'shenyang' :
+      config.theme === 'haerbin' ? 'haerbin' :
+      config.theme === 'hulunbeier' ? 'hulunbeier' : 'changchun';
+    switchArea(config.theme);
+    showToast('检测到身份证归属地：' + config.province);
+    return config;
+  }
+  return null;
+}
+
+// 原型演示：模拟定位
+function mockLocate() {
+  showToast('定位成功：长春市朝阳区');
+}
+
+// ========== 权益卡片展开收起 ==========
+function toggleSku(card) {
+  card.classList.toggle('expanded');
+}
+
+// ========== 门店列表渲染 ==========
+var currentFilter = "all";
+var searchKeyword = "";
+
+function renderStores() {
+  var list = document.getElementById('storeList');
+  list.innerHTML = "";
+  stores.filter(function(s) {
+    var matchType = currentFilter === "all" || s.type === currentFilter;
+    var matchSearch = !searchKeyword || s.name.indexOf(searchKeyword) >= 0;
+    return matchType && matchSearch;
+  }).forEach(function(s) {
+    var icons = { scenic: "景", food: "餐", hotel: "住" };
+    list.innerHTML += '<div class="store-item">' +
+      '<div class="store-img">' + icons[s.type] + '</div>' +
+      '<div class="store-info">' +
+        '<div class="store-name">' + s.name + '</div>' +
+        '<div class="store-meta">' +
+          '<span class="store-rating">★ ' + s.rating + '</span> · ' + s.addr +
+        '</div>' +
+        '<div class="store-nav" onclick="showToast(\'正在打开导航...\')">导航前往</div>' +
+      '</div>' +
+      '<div class="store-dist">' + s.dist + '</div>' +
+    '</div>';
+  });
+}
+
+function filterType(btn) {
+  document.querySelectorAll('.filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  currentFilter = btn.dataset.type;
+  renderStores();
+}
+
+function filterStores() {
+  searchKeyword = document.getElementById('searchInput').value;
+  renderStores();
+}
+
+// ========== 核销码生成 ==========
+function generateQrCode() {
+  var qr = document.getElementById('qrCode');
+  qr.innerHTML = '<div class="qr-pattern">';
+  for (var i = 0; i < 100; i++) {
+    var filled = Math.random() > 0.4 ? true : false;
+    qr.innerHTML += '<div class="qr-cell' + (filled ? '' : ' empty') + '"></div>';
+  }
+  qr.innerHTML += '</div>';
+
+  // 条码
+  var barcode = document.getElementById('barcode');
+  barcode.innerHTML = '';
+  for (var j = 0; j < 30; j++) {
+    var w = Math.random() > 0.5 ? 3 : 1;
+    barcode.innerHTML += '<span style="width:' + w + 'px"></span>';
+  }
+
+  // 核销码
+  var code = 'DB' + new Date().getTime().toString().slice(-8);
+  document.getElementById('verifyCode').textContent = code;
+}
+
+// 倒计时
+var countdownSec = 120;
+var countdownTimer = null;
+
+function startCountdown() {
+  countdownSec = 120;
+  if (countdownTimer) clearInterval(countdownTimer);
+  countdownTimer = setInterval(function() {
+    countdownSec--;
+    var m = Math.floor(countdownSec / 60);
+    var s = countdownSec % 60;
+    document.getElementById('countdown').textContent =
+      (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    if (countdownSec <= 0) {
+      generateQrCode();
+      startCountdown();
+    }
+  }, 1000);
+}
+
+// 模拟核销
+function simulateVerify() {
+  showToast('核销成功！已扣减权益次数');
+  document.getElementById('verifySuccess').classList.add('show');
+  setTimeout(function() {
+    document.getElementById('verifySuccess').classList.remove('show');
+  }, 2000);
+}
+
+// ========== Toast ==========
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2000);
+}
+
+// ========== 初始化 ==========
+renderStores();
+generateQrCode();
+startCountdown();
+mockLocate();
+</script>
+
+</body>
+</html>
